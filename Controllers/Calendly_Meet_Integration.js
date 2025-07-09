@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config();
 
-export default async function Calendly_Meet_Integration(req, res ) {
+async function InformUserForMeet(req, res ) {
     try {
         const { event, payload } = req.body;
           console.log("req.body-->",req.body);
@@ -31,7 +31,7 @@ export default async function Calendly_Meet_Integration(req, res ) {
         console.log(error);
     }
     
-}
+};
 const DiscordConnect = async (message) => {
 
     try {
@@ -53,4 +53,13 @@ const DiscordConnect = async (message) => {
     } catch (error) {
         console.error('❌ Error sending message:', error);
   }
+}
+
+export default async function Calendly_Meet_Integration(req, res) {
+    try {
+        await InformUserForMeet(req, res);
+    } catch (error) {
+        console.log('Something went wrong in the Calendly_Meet_Integration',error);
+    }
+    
 }
