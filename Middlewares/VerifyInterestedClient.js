@@ -127,66 +127,65 @@ import { DiscordConnect } from "../Utils/DiscordConnect.js";
 import { appendToGoogleSheet } from "../Utils/GoogleSheetsHelper.js";
 dotenv.config();
 
-const isDev = process.env.NODE_ENV !== 'production';
-const httpsAgent = new https.Agent({ rejectUnauthorized: !isDev });
+// const isDev = process.env.NODE_ENV !== 'production';
+// const httpsAgent = new https.Agent({ rejectUnauthorized: !isDev });
 
+//         const validateEmail = async (email) => {
+//             try {
+//                 const res = await fetch(`https://emailvalidation.abstractapi.com/v1/?`, {
+//                     params: {
+//                         api_key :process.env.ABSTRACT_API_EMAIL_VERIFICATION_API_KEY,
+//                         email
+//                     },
+//                     httpsAgent,
+//                     headers: {
+//                         'User-Agent': 'FlashFire/1.0'
+//                     }});
+//             return res.data;
+
+//             } catch (error) {
+//                 console.log(error)
+//             }  
+//         };
         const validateEmail = async (email) => {
             try {
-                const res = await axios.get(`https://emailvalidation.abstractapi.com/v1/?`, {
-                    params: {
-                        api_key :process.env.ABSTRACT_API_EMAIL_VERIFICATION_API_KEY,
-                        email
-                    },
-                    httpsAgent,
-                    headers: {
-                        'User-Agent': 'FlashFire/1.0'
-                    }});
-            return res.data;
-
+                let checkEmail = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${process.env.ABSTRACT_API_EMAIL_VERIFICATION_API_KEY}&email=${email}`);
+                let responseCheckEmail = await checkEmail.json();
+                console.log(responseCheckEmail);
+                return responseCheckEmail;
             } catch (error) {
-                console.log(error)
-            }  
-        };
-        // const validateEmail = async (email) => {
-        //     try {
-        //         let checkEmail = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${process.env.ABSTRACT_API_EMAIL_VERIFICATION_API_KEY}&email=${email}`);
-        //         let responseCheckEmail = await checkEmail.json();
-        //         console.log(responseCheckEmail);
-        //         return responseCheckEmail;
-        //     } catch (error) {
-        //         console.log('validate email error-->',error)
-        //     }
+                console.log('validate email error-->',error)
+            }
                        
-        // }
-
-        // const validateMobile = async (phone) => {
-        //     try {
-        //         let checkMobile = await fetch(`https://phonevalidation.abstractapi.com/v1/?api_key=${process.env.ABSTRACT_API_MOBILE_VERIFICATION_API_KEY}&phone=${phone}`)
-        //         let responseCheckMobile = await checkMobile.json();
-        //         console.log(responseCheckMobile);
-        //         return responseCheckMobile;
-        //     } catch (error) {
-        //         console.log('validate email error-->',error);
-        //     }
-        // }
+        }
         const validateMobile = async (phone) => {
             try {
-                const res = await axios.get(`https://phonevalidation.abstractapi.com/v1/?`, {
-                    params: {
-                        api_key: process.env.ABSTRACT_API_MOBILE_VERIFICATION_API_KEY,
-                        phone
-                    },
-                    httpsAgent,
-                    headers: {
-                        'User-Agent': 'FlashFire/1.0'
-                    }});
-            return res.data;
-                
+                let checkMobile = await fetch(`https://phonevalidation.abstractapi.com/v1/?api_key=${process.env.ABSTRACT_API_MOBILE_VERIFICATION_API_KEY}&phone=${phone}`)
+                let responseCheckMobile = await checkMobile.json();
+                console.log(responseCheckMobile);
+                return responseCheckMobile;
             } catch (error) {
-                console.log(error)
+                console.log('validate email error-->',error);
             }
+        }
+        // const validateMobile = async (phone) => {
+        //     try {
+        //         const res = await axios.get(`https://phonevalidation.abstractapi.com/v1/?`, {
+        //             params: {
+        //                 api_key: process.env.ABSTRACT_API_MOBILE_VERIFICATION_API_KEY,
+        //                 phone
+        //             },
+        //             httpsAgent,
+        //             headers: {
+        //                 'User-Agent': 'FlashFire/1.0'
+        //             }});
+        //     return res.data;
+                
+        //     } catch (error) {
+        //         console.log(error)
+        //     }
     
-        };
+        // };
 
 export default async function VerifyInterestedClient(req, res, next){  
     try {
@@ -227,7 +226,8 @@ export default async function VerifyInterestedClient(req, res, next){
             req.body.carrier = responseCheckMobile?.carrier;
             req.body.location = responseCheckMobile?.location;
             req.body.is_smtp_valid = responseCheckEmail?.is_smtp_valid?.value;
-            return next();
+            next();
+            return;
         } else {
             if (checkingInDatabaseForEmail.length > 0 && checkingInDatabaseForMobile.length > 0) {
                 const duplicateMessage = {
