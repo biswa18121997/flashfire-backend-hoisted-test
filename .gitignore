@@ -1,0 +1,7 @@
+# Node modules
+node_modules/
+.env
+
+
+google-service-key.json
+google-service-key.json
