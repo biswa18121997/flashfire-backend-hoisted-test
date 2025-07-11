@@ -46,7 +46,7 @@ import Routes from './Routes.js';
 import Connection from './Utils/ConnectDB.js';
 import cors from 'cors';
 import 'dotenv/config';
-import { DiscordConnect } from './Utils/DiscordConnect.js';
+// import { DiscordConnect } from './Utils/DiscordConnect.js';
 
 const app = express();
 
